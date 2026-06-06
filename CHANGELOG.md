@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add contributor guidance, maintainer workflow documentation, and example configurations.
+- Add GitHub Pages documentation site source.
+- Add CodeQL and OSSF Scorecard workflows for security and supply-chain checks.
+
 ## 0.2.0 - 2026-06-06
 
 - Add configuration file support with ignored finding IDs and default `failOn`.

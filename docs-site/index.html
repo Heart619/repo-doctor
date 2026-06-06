@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Repo Doctor Documentation</title>
+    <meta name="description" content="Repo Doctor CLI and GitHub Action documentation.">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="https://github.com/Heart619/repo-doctor">Repo Doctor</a>
+        <div class="nav-links">
+          <a href="#usage">Usage</a>
+          <a href="#workflows">Workflows</a>
+          <a href="#reference">Reference</a>
+        </div>
+      </nav>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">CLI and GitHub Action</p>
+          <h1>Repository health checks for open source maintainers.</h1>
+          <p class="lede">Repo Doctor audits README guidance, license, tests, CI, templates, security policy, changelog, package metadata, and SARIF output readiness.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="https://github.com/Heart619/repo-doctor">GitHub</a>
+            <a class="button secondary" href="https://github.com/Heart619/repo-doctor/releases">Releases</a>
+          </div>
+        </div>
+        <img class="report-image" src="assets/terminal-report.svg" alt="Example Repo Doctor terminal report">
+      </section>
+    </header>
+
+    <main>
+      <section id="usage" class="band">
+        <div class="content">
+          <h2>Usage</h2>
+          <div class="command-grid">
+            <article>
+              <h3>Local scan</h3>
+              <pre><code>repo-doctor . --markdown</code></pre>
+            </article>
+            <article>
+              <h3>CI gate</h3>
+              <pre><code>repo-doctor . --fail-on medium</code></pre>
+            </article>
+            <article>
+              <h3>SARIF output</h3>
+              <pre><code>repo-doctor . --sarif &gt; repo-doctor.sarif</code></pre>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="workflows" class="band muted">
+        <div class="content split">
+          <div>
+            <h2>Maintainer Workflows</h2>
+            <p>Use Repo Doctor during issue triage, pull request review, and release readiness checks. It keeps repository maintenance signals visible and repeatable.</p>
+          </div>
+          <ul class="workflow-list">
+            <li>Detect missing repository basics before release.</li>
+            <li>Publish Markdown summaries in GitHub Actions.</li>
+            <li>Export SARIF for code scanning integrations.</li>
+            <li>Dogfood maintenance tools on every pull request.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="reference" class="band">
+        <div class="content">
+          <h2>Reference</h2>
+          <div class="link-list">
+            <a href="https://github.com/Heart619/repo-doctor/blob/main/README.md">README</a>
+            <a href="https://github.com/Heart619/repo-doctor/blob/main/docs/findings.md">Finding Reference</a>
+            <a href="https://github.com/Heart619/repo-doctor/blob/main/docs/maintainer-workflows.md">Maintainer Workflows</a>
+            <a href="https://github.com/Heart619/repo-doctor/blob/main/docs/roadmap.md">Roadmap</a>
+            <a href="https://github.com/Heart619/repo-doctor/blob/main/CONTRIBUTING.md">Contributing</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

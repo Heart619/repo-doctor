@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/Heart619/repo-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/Heart619/repo-doctor/actions/workflows/ci.yml)
 [![Maintenance Dogfood](https://github.com/Heart619/repo-doctor/actions/workflows/maintenance-dogfood.yml/badge.svg)](https://github.com/Heart619/repo-doctor/actions/workflows/maintenance-dogfood.yml)
+[![CodeQL](https://github.com/Heart619/repo-doctor/actions/workflows/codeql.yml/badge.svg)](https://github.com/Heart619/repo-doctor/actions/workflows/codeql.yml)
+[![OSSF Scorecard](https://github.com/Heart619/repo-doctor/actions/workflows/scorecard.yml/badge.svg)](https://github.com/Heart619/repo-doctor/actions/workflows/scorecard.yml)
 [![Release](https://img.shields.io/github/v/release/Heart619/repo-doctor)](https://github.com/Heart619/repo-doctor/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -33,8 +35,17 @@ Repo Doctor is maintained as a real OSS project rather than a one-off demo:
 
 - CI verifies tests, linting, TypeScript build, and a self-audit on every pull request.
 - The maintenance dogfood workflow runs Repo Doctor together with README Command Verifier, GHA Linter Lite, and PR Risk Scanner.
+- CodeQL and OSSF Scorecard workflows provide scheduled security and supply-chain checks.
 - Issues track focused roadmap items, and release notes document user-visible changes.
 - Pull requests are kept scoped to one feature or maintenance improvement and are merged through CI.
+
+## Documentation
+
+- [Finding Reference](docs/findings.md) lists every finding ID, severity, and recommendation.
+- [Maintainer Workflows](docs/maintainer-workflows.md) describes issue triage, pull request review, release readiness, and dogfooding.
+- [Roadmap](docs/roadmap.md) links planned v0.3.0 work to public issues and milestones.
+- [Examples](examples/README.md) shows local config, GitHub Action, and SARIF upload examples.
+- [Contributing](CONTRIBUTING.md) explains local setup, issue reporting, pull request expectations, and release discipline.
 
 ## Usage
 
@@ -143,7 +154,7 @@ repo-doctor . --sarif --no-job-summary > repo-doctor.sarif
 
 ## Checks
 
-Repo Doctor v0.1 checks for:
+Repo Doctor checks for:
 
 - README presence and basic installation/usage sections.
 - License file.
@@ -194,9 +205,9 @@ npm run doctor:self
 
 ## Roadmap
 
-- Add language-specific checks for Python, Rust, and Go projects.
-- Add SARIF output for code scanning integrations.
-- Add configurable check selection.
+- Improve monorepo package detection.
+- Add config schema validation.
+- Improve SARIF rule metadata.
 - Add release-readiness checks for maintainers.
 - Add GitHub API integration for issue and PR maintenance signals.
 
