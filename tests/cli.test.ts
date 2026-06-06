@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { runCli } from "../src/cli.js";
 import type { ScanResult } from "../src/core/types.js";
+import packageJson from "../package.json" with { type: "json" };
 
 interface Capture {
   stdout: string;
@@ -63,6 +64,19 @@ async function createHealthyFixture(): Promise<string> {
 }
 
 describe("runCli", () => {
+  it("prints the package version", async () => {
+    const capture = createCapture();
+
+    const exitCode = await runCli(["--version"], {
+      writeStdout: capture.writeStdout,
+      writeStderr: capture.writeStderr
+    });
+
+    expect(exitCode).toBe(0);
+    expect(capture.stdout).toBe(`${packageJson.version}\n`);
+    expect(capture.stderr).toBe("");
+  });
+
   it("prints text output by default", async () => {
     const rootPath = await createHealthyFixture();
     const capture = createCapture();
@@ -132,4 +146,3 @@ describe("runCli", () => {
     expect(capture.stderr).toContain("Path does not exist");
   });
 });
-
