@@ -42,6 +42,12 @@ Print a Markdown report:
 repo-doctor . --markdown
 ```
 
+Print a SARIF 2.1.0 report:
+
+```bash
+repo-doctor . --sarif
+```
+
 Print the installed version:
 
 ```bash
@@ -114,6 +120,12 @@ jobs:
 ```
 
 When the action runs in GitHub Actions, Repo Doctor appends a Markdown report to the job summary by default. Add `--no-job-summary` to `args` to disable this.
+
+SARIF output can be redirected to a file and uploaded with GitHub code scanning tools:
+
+```bash
+repo-doctor . --sarif --no-job-summary > repo-doctor.sarif
+```
 
 ## Checks
 

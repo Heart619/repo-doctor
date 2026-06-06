@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { renderJsonReport } from "../src/reporters/json.js";
 import { renderMarkdownReport } from "../src/reporters/markdown.js";
+import { renderSarifReport } from "../src/reporters/sarif.js";
 import { renderTextReport } from "../src/reporters/text.js";
 import type { ScanResult } from "../src/core/types.js";
 
@@ -60,3 +61,43 @@ describe("renderMarkdownReport", () => {
   });
 });
 
+describe("renderSarifReport", () => {
+  it("renders SARIF 2.1.0 with finding IDs as rule IDs", () => {
+    const parsed = JSON.parse(renderSarifReport(result)) as {
+      version: string;
+      runs: Array<{
+        tool: {
+          driver: {
+            name: string;
+            rules: Array<{ id: string }>;
+          };
+        };
+        results: Array<{
+          ruleId: string;
+          level: string;
+          message: { text: string };
+          locations: Array<{
+            physicalLocation: { artifactLocation: { uri: string } };
+          }>;
+        }>;
+      }>;
+    };
+
+    expect(parsed.version).toBe("2.1.0");
+    expect(parsed.runs[0]?.tool.driver.name).toBe("Repo Doctor");
+    expect(parsed.runs[0]?.tool.driver.rules.map((rule) => rule.id)).toEqual([
+      "missing-license",
+      "missing-ci"
+    ]);
+    expect(parsed.runs[0]?.results[0]).toMatchObject({
+      ruleId: "missing-license",
+      level: "error",
+      message: { text: "The repository does not include a license file." }
+    });
+    expect(
+      parsed.runs[0]?.results[0]?.locations[0]?.physicalLocation
+        .artifactLocation.uri
+    ).toBe("LICENSE");
+    expect(parsed.runs[0]?.results[1]?.level).toBe("warning");
+  });
+});
