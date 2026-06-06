@@ -8,13 +8,15 @@ Repo Doctor is a CLI and GitHub Action for open source maintainers. It audits re
 
 ## Why This Repository Fits
 
-Repo Doctor has visible maintenance activity: multiple issues, scoped pull requests, passing CI, release tags, changelog entries, and a self-audit workflow. The project also dogfoods related tools from the same maintenance toolkit:
+Repo Doctor has visible maintenance activity: multiple issues, scoped pull requests, passing CI, release tags, changelog entries, maintainer documentation, a GitHub Pages documentation site, and a self-audit workflow. The project also dogfoods related tools from the same maintenance toolkit:
 
 - `Heart619/readme-command-verifier` checks README command examples.
 - `Heart619/gha-linter-lite` checks GitHub Actions workflow hygiene.
 - `Heart619/pr-risk-scanner` scores changed-file risk in pull requests.
 
 Together these repositories form a small OSS maintenance toolkit for repeatable pull request review, issue triage, release readiness, and repository health checks.
+
+The main repository now also has CodeQL, OSSF Scorecard, a v0.3.0 milestone, public roadmap issues, contributor guidance, maintainer workflow documentation, and examples for local scans, GitHub Actions usage, and SARIF upload.
 
 ## How Codex Credits Would Be Used
 
@@ -49,11 +51,13 @@ Use `Heart619/repo-doctor` as the primary repository. The supporting repositorie
 - Role: `Primary maintainer`
 - License: `MIT`
 - Latest release: `https://github.com/Heart619/repo-doctor/releases/tag/v0.2.0`
-- Maintenance evidence PR: `https://github.com/Heart619/repo-doctor/pull/16`
+- Documentation site: `https://heart619.github.io/repo-doctor/`
+- Roadmap milestone: `https://github.com/Heart619/repo-doctor/milestone/2`
+- Maintenance evidence PRs: `https://github.com/Heart619/repo-doctor/pull/16`, `https://github.com/Heart619/repo-doctor/pull/23`, `https://github.com/Heart619/repo-doctor/pull/24`
 
 ### Repository Description
 
-`Heart619/repo-doctor` is a public MIT-licensed TypeScript CLI and GitHub Action for OSS maintenance. It audits README guidance, license, CI, templates, security policy, changelog, package metadata, and SARIF output. It has triaged issues, merged PRs, passing CI, release tags, maintainer docs, and a dogfooding workflow that runs companion maintenance tools.
+`Heart619/repo-doctor` is a public MIT-licensed TypeScript CLI and GitHub Action for OSS maintenance. It audits README guidance, license, CI, templates, security policy, changelog, package metadata, and SARIF output. It has triaged issues, merged PRs, passing CI, release tags, contributor guidance, maintainer docs, public roadmap issues, a GitHub Pages documentation site, CodeQL, OSSF Scorecard, and a dogfooding workflow that runs companion maintenance tools.
 
 ### How Codex Credits Will Be Used
 
@@ -61,12 +65,12 @@ I would use Codex credits for practical maintainer work: triaging issues into re
 
 ### Additional Context
 
-Repo Doctor is part of a small maintenance toolkit under `Heart619`: `readme-command-verifier` checks README command drift, `gha-linter-lite` checks workflow hygiene, and `pr-risk-scanner` summarizes changed-file risk in pull requests. The main repo dogfoods these tools in its own maintenance workflow, so Codex would help improve tools that are directly used for OSS review and release readiness.
+Repo Doctor is part of a small maintenance toolkit under `Heart619`: `readme-command-verifier` checks README command drift, `gha-linter-lite` checks workflow hygiene, and `pr-risk-scanner` summarizes changed-file risk in pull requests. The main repo dogfoods these tools in its own maintenance workflow, uses CodeQL and OSSF Scorecard for security and supply-chain checks, and tracks v0.3.0 work in public roadmap issues. Codex would help improve tools that are directly used for OSS review and release readiness.
 
 ## Submission Checklist
 
 - Use `Heart619/repo-doctor` as the primary project.
 - Be transparent that this is a new but actively maintained OSS maintenance tool.
-- Mention public evidence only: issues, merged PRs, CI, releases, changelog, maintainer docs, and dogfooding workflows.
+- Mention public evidence only: issues, merged PRs, CI, CodeQL, OSSF Scorecard, GitHub Pages docs, releases, changelog, maintainer docs, roadmap issues, and dogfooding workflows.
 - Do not claim large adoption, many users, or external stars unless those are visible on GitHub or npm.
 - If npm publishing is completed later, add the npm package link before submitting.
