@@ -1,0 +1,57 @@
+name: Maintenance Dogfood
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  repository-maintenance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Repo Doctor
+        run: npm run build
+
+      - name: Run Repo Doctor on this repository
+        run: node dist/cli.js . --markdown --fail-on medium
+
+      - name: Verify README command examples
+        uses: Heart619/readme-command-verifier@v0.1.1
+        with:
+          path: .
+          format: markdown
+
+      - name: Lint GitHub Actions workflows
+        uses: Heart619/gha-linter-lite@v0.1.1
+        with:
+          path: .
+          format: markdown
+          fail-on: warning
+
+      - name: Score PR changed-file risk
+        if: github.event_name == 'pull_request'
+        uses: Heart619/pr-risk-scanner@v0.1.2
+        with:
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.sha }}
+          format: markdown
+          fail-on: none

@@ -1,5 +1,10 @@
 # Repo Doctor
 
+[![CI](https://github.com/Heart619/repo-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/Heart619/repo-doctor/actions/workflows/ci.yml)
+[![Maintenance Dogfood](https://github.com/Heart619/repo-doctor/actions/workflows/maintenance-dogfood.yml/badge.svg)](https://github.com/Heart619/repo-doctor/actions/workflows/maintenance-dogfood.yml)
+[![Release](https://img.shields.io/github/v/release/Heart619/repo-doctor)](https://github.com/Heart619/repo-doctor/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Repo Doctor is a small CLI and GitHub Action that audits open-source repository maintenance health. It checks for common project signals such as README guidance, license, tests, CI, issue templates, pull request templates, security policy, changelog, and package metadata.
 
 The score is a heuristic, not a quality certificate. The goal is to give maintainers a fast checklist with concrete next steps.
@@ -21,6 +26,15 @@ After the package is published, run it with npm:
 ```bash
 npx @heart619/repo-doctor@latest .
 ```
+
+## Maintenance Evidence
+
+Repo Doctor is maintained as a real OSS project rather than a one-off demo:
+
+- CI verifies tests, linting, TypeScript build, and a self-audit on every pull request.
+- The maintenance dogfood workflow runs Repo Doctor together with README Command Verifier, GHA Linter Lite, and PR Risk Scanner.
+- Issues track focused roadmap items, and release notes document user-visible changes.
+- Pull requests are kept scoped to one feature or maintenance improvement and are merged through CI.
 
 ## Usage
 
