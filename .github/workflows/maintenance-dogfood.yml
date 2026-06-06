@@ -35,13 +35,13 @@ jobs:
         run: node dist/cli.js . --markdown --fail-on medium
 
       - name: Verify README command examples
-        uses: Heart619/readme-command-verifier@v0.1.0
+        uses: Heart619/readme-command-verifier@v0.1.1
         with:
           path: .
           format: markdown
 
       - name: Lint GitHub Actions workflows
-        uses: Heart619/gha-linter-lite@v0.1.0
+        uses: Heart619/gha-linter-lite@v0.1.1
         with:
           path: .
           format: markdown
@@ -49,7 +49,7 @@ jobs:
 
       - name: Score PR changed-file risk
         if: github.event_name == 'pull_request'
-        uses: Heart619/pr-risk-scanner@v0.1.0
+        uses: Heart619/pr-risk-scanner@v0.1.1
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.sha }}
