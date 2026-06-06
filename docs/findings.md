@@ -4,6 +4,8 @@ This page documents the finding IDs emitted by Repo Doctor v0.1. Finding IDs are
 
 Severities are heuristics, not a guarantee of project quality or risk. They may change across releases as checks become more precise.
 
+Use these IDs in `repo-doctor.config.json` when a finding does not apply to a repository.
+
 | Finding ID | Severity | Meaning | Recommendation |
 | --- | --- | --- | --- |
 | `missing-readme` | high | The repository does not include a README file. | Add a README with installation, usage, and contribution guidance. |
