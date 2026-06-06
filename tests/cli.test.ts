@@ -131,6 +131,26 @@ describe("runCli", () => {
     expect(capture.stdout).toContain("# Repo Doctor Report");
   });
 
+  it("prints SARIF output", async () => {
+    const rootPath = await createFixture();
+    const capture = createCapture();
+
+    const exitCode = await runCli([rootPath, "--sarif"], {
+      writeStdout: capture.writeStdout,
+      writeStderr: capture.writeStderr
+    });
+    const parsed = JSON.parse(capture.stdout) as {
+      version: string;
+      runs: Array<{ results: Array<{ ruleId: string }> }>;
+    };
+
+    expect(exitCode).toBe(0);
+    expect(parsed.version).toBe("2.1.0");
+    expect(parsed.runs[0]?.results.map((result) => result.ruleId)).toContain(
+      "missing-readme"
+    );
+  });
+
   it("writes a Markdown report to GITHUB_STEP_SUMMARY", async () => {
     const rootPath = await createHealthyFixture();
     const summaryPath = path.join(rootPath, "summary.md");

@@ -12,9 +12,10 @@ import { scanRepository, shouldFailForThreshold } from "./core/scanner.js";
 import type { Severity } from "./core/types.js";
 import { renderJsonReport } from "./reporters/json.js";
 import { renderMarkdownReport } from "./reporters/markdown.js";
+import { renderSarifReport } from "./reporters/sarif.js";
 import { renderTextReport } from "./reporters/text.js";
 
-type OutputFormat = "text" | "json" | "markdown";
+type OutputFormat = "text" | "json" | "markdown" | "sarif";
 
 interface CliOptions {
   targetPath: string;
@@ -75,12 +76,15 @@ function parseArgs(args: string[]): CliOptions {
       throw new Error(helpText());
     }
 
-    if (arg === "--json" || arg === "--markdown") {
+    if (arg === "--json" || arg === "--markdown" || arg === "--sarif") {
       if (sawOutputFlag) {
-        throw new Error("Choose only one output format: --json or --markdown.");
+        throw new Error(
+          "Choose only one output format: --json, --markdown, or --sarif."
+        );
       }
 
-      outputFormat = arg === "--json" ? "json" : "markdown";
+      outputFormat =
+        arg === "--json" ? "json" : arg === "--markdown" ? "markdown" : "sarif";
       sawOutputFlag = true;
       continue;
     }
@@ -133,6 +137,10 @@ function renderResult(
     return renderMarkdownReport(result);
   }
 
+  if (outputFormat === "sarif") {
+    return renderSarifReport(result);
+  }
+
   return renderTextReport(result);
 }
 
@@ -145,12 +153,13 @@ function helpText(): string {
     "Repo Doctor",
     "",
     "Usage:",
-    "  repo-doctor [path] [--json|--markdown] [--fail-on low|medium|high]",
+    "  repo-doctor [path] [--json|--markdown|--sarif] [--fail-on low|medium|high]",
     "",
     "Options:",
     "  --version    Print the package version.",
     "  --json       Print machine-readable JSON.",
     "  --markdown   Print a Markdown report.",
+    "  --sarif      Print a SARIF 2.1.0 report.",
     "  --fail-on    Exit 1 when findings meet or exceed a severity threshold.",
     "  --no-job-summary  Do not write to GITHUB_STEP_SUMMARY."
   ].join("\n");
