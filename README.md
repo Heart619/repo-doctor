@@ -113,7 +113,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Heart619/repo-doctor@v0.1.0
+      - uses: Heart619/repo-doctor@v0.2.0
         with:
           path: "."
           args: "--markdown --fail-on medium"

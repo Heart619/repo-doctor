@@ -1,6 +1,6 @@
 {
   "name": "@heart619/repo-doctor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A CLI and GitHub Action that audits open-source repository maintenance health.",
   "type": "module",
   "license": "MIT",
