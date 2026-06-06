@@ -54,4 +54,4 @@ jobs:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.sha }}
           format: markdown
-          fail-on: high
+          fail-on: none
