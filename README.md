@@ -108,6 +108,8 @@ Repo Doctor v0.1 checks for:
 - Changelog or release notes.
 - Common package metadata.
 
+See [Finding Reference](docs/findings.md) for every current finding ID, severity, and recommendation.
+
 ## Development
 
 Install dependencies:
