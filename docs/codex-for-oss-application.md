@@ -39,3 +39,34 @@ The main goal is to reduce maintainer overhead while keeping each change reviewa
 I maintain `Heart619/repo-doctor`, a CLI and GitHub Action that helps open source maintainers audit repository health signals such as README quality, license, CI, templates, security policy, changelog, package metadata, and SARIF output. The repository has passing CI, scoped issues and pull requests, release tags, changelog entries, and a dogfooding workflow. It is part of a small maintenance toolkit with `readme-command-verifier`, `gha-linter-lite`, and `pr-risk-scanner`, which cover README command drift, workflow hygiene, and pull request risk signals.
 
 I would use Codex credits for maintainership tasks: issue triage, test-backed feature work, CI failure analysis, documentation improvements, release preparation, and small external OSS contributions found by these tools. The credits would directly support open source maintenance workflows rather than private product development.
+
+## Form-Ready Answers
+
+Use `Heart619/repo-doctor` as the primary repository. The supporting repositories are useful context, but the application should lead with one clear project.
+
+- GitHub username or organization: `Heart619`
+- Primary repository: `https://github.com/Heart619/repo-doctor`
+- Role: `Primary maintainer`
+- License: `MIT`
+- Latest release: `https://github.com/Heart619/repo-doctor/releases/tag/v0.2.0`
+- Maintenance evidence PR: `https://github.com/Heart619/repo-doctor/pull/16`
+
+### Repository Description
+
+`Heart619/repo-doctor` is a public MIT-licensed TypeScript CLI and GitHub Action for OSS maintenance. It audits README guidance, license, CI, templates, security policy, changelog, package metadata, and SARIF output. It has triaged issues, merged PRs, passing CI, release tags, maintainer docs, and a dogfooding workflow that runs companion maintenance tools.
+
+### How Codex Credits Will Be Used
+
+I would use Codex credits for practical maintainer work: triaging issues into reproducible bugs, drafting focused PRs with tests, reviewing CI and GitHub Action failures, improving docs and release notes, and making small external OSS contributions when these tools find real README or workflow problems. The credits would support public OSS maintenance, not private product development.
+
+### Additional Context
+
+Repo Doctor is part of a small maintenance toolkit under `Heart619`: `readme-command-verifier` checks README command drift, `gha-linter-lite` checks workflow hygiene, and `pr-risk-scanner` summarizes changed-file risk in pull requests. The main repo dogfoods these tools in its own maintenance workflow, so Codex would help improve tools that are directly used for OSS review and release readiness.
+
+## Submission Checklist
+
+- Use `Heart619/repo-doctor` as the primary project.
+- Be transparent that this is a new but actively maintained OSS maintenance tool.
+- Mention public evidence only: issues, merged PRs, CI, releases, changelog, maintainer docs, and dogfooding workflows.
+- Do not claim large adoption, many users, or external stars unless those are visible on GitHub or npm.
+- If npm publishing is completed later, add the npm package link before submitting.
