@@ -46,7 +46,16 @@ describe("runProjectFileChecks", () => {
       "# Example\n\n## Installation\n\nnpm install\n\n## Usage\n\nrepo-doctor .\n"
     );
     await writeFixtureFile(rootPath, "LICENSE", "MIT\n");
-    await writeFixtureFile(rootPath, "package.json", '{"scripts":{"test":"vitest"}}');
+    await writeFixtureFile(
+      rootPath,
+      "package.json",
+      JSON.stringify({
+        description: "Example package.",
+        license: "MIT",
+        repository: "https://github.com/example/example",
+        scripts: { test: "vitest" }
+      })
+    );
     await writeFixtureFile(rootPath, "tests/example.test.ts", "test('ok', () => {})");
     await writeFixtureFile(rootPath, ".github/workflows/ci.yml", "name: CI\n");
     await writeFixtureFile(rootPath, ".github/ISSUE_TEMPLATE/bug.md", "bug\n");
@@ -68,5 +77,39 @@ describe("runProjectFileChecks", () => {
     expect(findings.map((finding) => finding.id)).toContain("readme-missing-install");
     expect(findings.map((finding) => finding.id)).toContain("readme-missing-usage");
   });
-});
 
+  it("reports missing Node package metadata fields", async () => {
+    const rootPath = await createFixture();
+    await writeFixtureFile(rootPath, "package.json", '{"scripts":{"test":"vitest"}}');
+
+    const findings = await runProjectFileChecks({ rootPath });
+
+    expect(findings.map((finding) => finding.id)).toEqual(
+      expect.arrayContaining([
+        "node-package-missing-description",
+        "node-package-missing-license",
+        "node-package-missing-repository"
+      ])
+    );
+  });
+
+  it("does not require package.json license when a license file exists", async () => {
+    const rootPath = await createFixture();
+    await writeFixtureFile(
+      rootPath,
+      "package.json",
+      JSON.stringify({
+        description: "Example package.",
+        repository: "https://github.com/example/example",
+        scripts: { test: "vitest" }
+      })
+    );
+    await writeFixtureFile(rootPath, "LICENSE", "MIT\n");
+
+    const findings = await runProjectFileChecks({ rootPath });
+
+    expect(findings.map((finding) => finding.id)).not.toContain(
+      "node-package-missing-license"
+    );
+  });
+});

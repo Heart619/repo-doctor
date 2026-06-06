@@ -10,6 +10,9 @@ const currentFindingIds = [
   "missing-ci",
   "missing-security-policy",
   "missing-package-metadata",
+  "node-package-missing-description",
+  "node-package-missing-license",
+  "node-package-missing-repository",
   "missing-issue-template",
   "missing-pr-template",
   "missing-changelog"

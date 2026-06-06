@@ -128,6 +128,7 @@ Repo Doctor v0.1 checks for:
 - Security policy.
 - Changelog or release notes.
 - Common package metadata.
+- Node package description, license, and repository metadata.
 
 See [Finding Reference](docs/findings.md) for every current finding ID, severity, and recommendation.
 

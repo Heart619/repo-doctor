@@ -16,6 +16,9 @@ Use these IDs in `repo-doctor.config.json` when a finding does not apply to a re
 | `missing-ci` | medium | The repository does not include a GitHub Actions workflow. | Add a CI workflow that runs tests and lint checks on pull requests. |
 | `missing-security-policy` | medium | The repository does not document how to report security issues. | Add `SECURITY.md` with supported versions and a disclosure contact. |
 | `missing-package-metadata` | medium | The repository does not include common package metadata. | Add package metadata for the project's ecosystem. |
+| `node-package-missing-description` | low | `package.json` does not include a package description. | Add a short package description for npm and GitHub metadata. |
+| `node-package-missing-license` | low | `package.json` does not include a license and no license file exists. | Add a `package.json` license field or a license file. |
+| `node-package-missing-repository` | low | `package.json` does not include repository metadata. | Add a repository field that points to the source repository. |
 | `missing-issue-template` | low | The repository does not include an issue template. | Add issue templates to guide bug reports and feature requests. |
 | `missing-pr-template` | low | The repository does not include a pull request template. | Add a PR template that asks contributors for context and test evidence. |
 | `missing-changelog` | low | The repository does not include changelog or release notes. | Add `CHANGELOG.md` to make release history easier to follow. |

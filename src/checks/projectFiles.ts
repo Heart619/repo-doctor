@@ -178,6 +178,7 @@ async function checkPackageMetadata(
   rootPath: string,
   findings: Finding[]
 ): Promise<void> {
+  const packageJsonPath = path.join(rootPath, "package.json");
   const hasMetadata = await anyPathExists(rootPath, [
     "package.json",
     "pyproject.toml",
@@ -187,18 +188,20 @@ async function checkPackageMetadata(
     "pom.xml"
   ]);
 
-  if (hasMetadata) {
-    return;
+  if (!hasMetadata) {
+    findings.push({
+      id: "missing-package-metadata",
+      title: "Missing package metadata",
+      severity: "medium",
+      message: "The repository does not include common package metadata.",
+      recommendation: "Add package metadata for the project's ecosystem.",
+      files: ["package.json", "pyproject.toml", "Cargo.toml", "go.mod", "pom.xml"]
+    });
   }
 
-  findings.push({
-    id: "missing-package-metadata",
-    title: "Missing package metadata",
-    severity: "medium",
-    message: "The repository does not include common package metadata.",
-    recommendation: "Add package metadata for the project's ecosystem.",
-    files: ["package.json", "pyproject.toml", "Cargo.toml", "go.mod", "pom.xml"]
-  });
+  if (await pathExists(packageJsonPath)) {
+    await checkNodePackageMetadata(rootPath, findings);
+  }
 }
 
 async function checkIssueTemplate(
@@ -233,22 +236,104 @@ async function checkIssueTemplate(
 }
 
 async function hasPackageJsonTestScript(rootPath: string): Promise<boolean> {
+  const parsed = await readPackageJson(rootPath);
+
+  return typeof parsed?.scripts?.test === "string";
+}
+
+async function checkNodePackageMetadata(
+  rootPath: string,
+  findings: Finding[]
+): Promise<void> {
+  const packageJson = await readPackageJson(rootPath);
+
+  if (!packageJson) {
+    return;
+  }
+
+  if (!isNonEmptyString(packageJson.description)) {
+    findings.push({
+      id: "node-package-missing-description",
+      title: "Node package missing description",
+      severity: "low",
+      message: "package.json does not include a description.",
+      recommendation: "Add a short package description for npm and GitHub metadata.",
+      files: ["package.json"]
+    });
+  }
+
+  if (
+    !isNonEmptyString(packageJson.license) &&
+    !(await anyPathExists(rootPath, ["LICENSE", "LICENSE.md", "COPYING"]))
+  ) {
+    findings.push({
+      id: "node-package-missing-license",
+      title: "Node package missing license metadata",
+      severity: "low",
+      message: "package.json does not include a license and no license file exists.",
+      recommendation: "Add a package.json license field or a license file.",
+      files: ["package.json", "LICENSE"]
+    });
+  }
+
+  if (!hasRepositoryMetadata(packageJson.repository)) {
+    findings.push({
+      id: "node-package-missing-repository",
+      title: "Node package missing repository metadata",
+      severity: "low",
+      message: "package.json does not include repository metadata.",
+      recommendation: "Add a repository field that points to the source repository.",
+      files: ["package.json"]
+    });
+  }
+}
+
+async function readPackageJson(rootPath: string): Promise<
+  | {
+      description?: unknown;
+      license?: unknown;
+      repository?: unknown;
+      scripts?: Record<string, unknown>;
+    }
+  | undefined
+> {
   const packageJsonPath = path.join(rootPath, "package.json");
 
   if (!(await pathExists(packageJsonPath))) {
-    return false;
+    return undefined;
   }
 
   try {
     const rawPackageJson = await readFile(packageJsonPath, "utf8");
-    const parsed = JSON.parse(rawPackageJson) as {
+    return JSON.parse(rawPackageJson) as {
+      description?: unknown;
+      license?: unknown;
+      repository?: unknown;
       scripts?: Record<string, unknown>;
     };
-
-    return typeof parsed.scripts?.test === "string";
   } catch {
-    return false;
+    return undefined;
   }
+}
+
+function hasRepositoryMetadata(repository: unknown): boolean {
+  if (isNonEmptyString(repository)) {
+    return true;
+  }
+
+  if (
+    typeof repository === "object" &&
+    repository !== null &&
+    "url" in repository
+  ) {
+    return isNonEmptyString(repository.url);
+  }
+
+  return false;
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
 }
 
 function hasSection(content: string, names: string[]): boolean {
