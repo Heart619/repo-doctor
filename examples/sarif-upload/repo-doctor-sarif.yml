@@ -1,0 +1,25 @@
+name: Repo Doctor SARIF
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  repo-doctor-sarif:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --global @heart619/repo-doctor
+      - run: repo-doctor . --sarif --no-job-summary > repo-doctor.sarif
+      - uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: repo-doctor.sarif

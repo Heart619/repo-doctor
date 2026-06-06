@@ -1,0 +1,20 @@
+name: Repo Doctor
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  repo-doctor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Heart619/repo-doctor@v0.2.0
+        with:
+          path: "."
+          args: "--markdown --fail-on medium"

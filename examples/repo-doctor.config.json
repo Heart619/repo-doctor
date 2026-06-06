@@ -1,0 +1,4 @@
+{
+  "ignore": ["missing-changelog"],
+  "failOn": "medium"
+}
