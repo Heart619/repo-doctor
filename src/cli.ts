@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
 
 import { projectFileChecks } from "./checks/projectFiles.js";
+import { loadRepoDoctorConfig } from "./core/config.js";
 import { pathExists } from "./core/fs.js";
 import { scanRepository, shouldFailForThreshold } from "./core/scanner.js";
 import type { Severity } from "./core/types.js";
@@ -41,10 +42,15 @@ export async function runCli(args: string[], io: CliIo): Promise<number> {
       return 1;
     }
 
-    const result = await scanRepository(rootPath, projectFileChecks);
+    const config = await loadRepoDoctorConfig(rootPath);
+    const result = await scanRepository(rootPath, projectFileChecks, {
+      ignoreFindingIds: config.ignore
+    });
     io.writeStdout(renderResult(result, options.outputFormat));
 
-    return shouldFailForThreshold(result.findings, options.failOn) ? 1 : 0;
+    return shouldFailForThreshold(result.findings, options.failOn ?? config.failOn)
+      ? 1
+      : 0;
   } catch (error) {
     io.writeStderr(`${error instanceof Error ? error.message : String(error)}\n`);
     return 1;

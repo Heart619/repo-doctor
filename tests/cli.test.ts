@@ -133,6 +133,60 @@ describe("runCli", () => {
     expect(capture.stdout).toContain("Score:");
   });
 
+  it("uses ignore and failOn from repo-doctor.config.json", async () => {
+    const rootPath = await createFixture();
+    await writeFixtureFile(
+      rootPath,
+      "repo-doctor.config.json",
+      JSON.stringify({
+        ignore: [
+          "missing-readme",
+          "missing-license",
+          "missing-tests",
+          "missing-ci",
+          "missing-security-policy",
+          "missing-package-metadata"
+        ],
+        failOn: "low"
+      })
+    );
+    const capture = createCapture();
+
+    const exitCode = await runCli([rootPath, "--json"], {
+      writeStdout: capture.writeStdout,
+      writeStderr: capture.writeStderr
+    });
+    const parsed = JSON.parse(capture.stdout) as ScanResult;
+
+    expect(exitCode).toBe(1);
+    expect(parsed.findings.map((finding) => finding.id)).toEqual([
+      "missing-changelog",
+      "missing-issue-template",
+      "missing-pr-template"
+    ]);
+  });
+
+  it("lets --fail-on override the config failOn value", async () => {
+    const rootPath = await createFixture();
+    await writeFixtureFile(
+      rootPath,
+      "repo-doctor.config.json",
+      JSON.stringify({
+        ignore: ["missing-readme", "missing-license"],
+        failOn: "high"
+      })
+    );
+    const capture = createCapture();
+
+    const exitCode = await runCli([rootPath, "--fail-on", "medium"], {
+      writeStdout: capture.writeStdout,
+      writeStderr: capture.writeStderr
+    });
+
+    expect(exitCode).toBe(1);
+    expect(capture.stdout).toContain("[MEDIUM]");
+  });
+
   it("reports invalid repository paths", async () => {
     const capture = createCapture();
     const missingPath = path.join(tmpdir(), "repo-doctor-missing-path");

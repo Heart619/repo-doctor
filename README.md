@@ -54,6 +54,19 @@ Fail CI when medium or high severity findings exist:
 repo-doctor . --fail-on medium
 ```
 
+## Configuration
+
+Repo Doctor reads `repo-doctor.config.json` from the repository root when it exists:
+
+```json
+{
+  "ignore": ["missing-changelog"],
+  "failOn": "medium"
+}
+```
+
+`ignore` skips findings by ID. `failOn` sets the default CI failure threshold. CLI flags take precedence over config values, so `repo-doctor . --fail-on high` overrides `failOn` from the config file.
+
 ## Example Output
 
 ```text

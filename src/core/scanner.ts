@@ -1,5 +1,9 @@
 import type { Finding, RepositoryCheck, ScanResult, Severity } from "./types.js";
 
+interface ScanOptions {
+  ignoreFindingIds?: string[];
+}
+
 const severityPenalty: Record<Severity, number> = {
   high: 25,
   medium: 10,
@@ -36,11 +40,15 @@ export function shouldFailForThreshold(
 
 export async function scanRepository(
   rootPath: string,
-  checks: RepositoryCheck[]
+  checks: RepositoryCheck[],
+  options: ScanOptions = {}
 ): Promise<ScanResult> {
+  const ignoredIds = new Set(options.ignoreFindingIds ?? []);
   const findings = (
     await Promise.all(checks.map((check) => check.run({ rootPath })))
-  ).flat();
+  )
+    .flat()
+    .filter((finding) => !ignoredIds.has(finding.id));
   const sortedFindings = [...findings].sort((left, right) => {
     const severityDifference =
       severityRank[right.severity] - severityRank[left.severity];
@@ -59,4 +67,3 @@ export async function scanRepository(
     findings: sortedFindings
   };
 }
-

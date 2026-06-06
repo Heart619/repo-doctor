@@ -84,5 +84,21 @@ describe("scanRepository", () => {
     expect(result.findings.map((finding) => finding.id)).toEqual(["high", "low"]);
     expect(result.checkedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   });
-});
 
+  it("skips findings whose IDs are ignored", async () => {
+    const rootPath = await mkdtemp(path.join(tmpdir(), "repo-doctor-"));
+    const checks: RepositoryCheck[] = [
+      {
+        id: "mixed-check",
+        run: async () => [highFinding, mediumFinding, lowFinding]
+      }
+    ];
+
+    const result = await scanRepository(rootPath, checks, {
+      ignoreFindingIds: ["high", "low"]
+    });
+
+    expect(result.findings.map((finding) => finding.id)).toEqual(["medium"]);
+    expect(result.score).toBe(90);
+  });
+});
