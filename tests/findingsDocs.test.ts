@@ -13,6 +13,8 @@ const currentFindingIds = [
   "node-package-missing-description",
   "node-package-missing-license",
   "node-package-missing-repository",
+  "python-project-missing-name",
+  "python-project-missing-test-tooling",
   "missing-issue-template",
   "missing-pr-template",
   "missing-changelog"

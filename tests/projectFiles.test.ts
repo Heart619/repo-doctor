@@ -112,4 +112,51 @@ describe("runProjectFileChecks", () => {
       "node-package-missing-license"
     );
   });
+
+  it("accepts Python projects with a project name and pytest configuration", async () => {
+    const rootPath = await createFixture();
+    await writeFixtureFile(
+      rootPath,
+      "pyproject.toml",
+      [
+        "[project]",
+        'name = "example-python-package"',
+        'description = "Example Python package."',
+        "",
+        "[tool.pytest.ini_options]",
+        'testpaths = ["tests"]'
+      ].join("\n")
+    );
+
+    const findings = await runProjectFileChecks({ rootPath });
+
+    expect(findings.map((finding) => finding.id)).not.toEqual(
+      expect.arrayContaining([
+        "python-project-missing-name",
+        "python-project-missing-test-tooling"
+      ])
+    );
+  });
+
+  it("reports missing Python project name and test tooling hints", async () => {
+    const rootPath = await createFixture();
+    await writeFixtureFile(
+      rootPath,
+      "pyproject.toml",
+      [
+        "[build-system]",
+        'requires = ["setuptools"]',
+        'build-backend = "setuptools.build_meta"'
+      ].join("\n")
+    );
+
+    const findings = await runProjectFileChecks({ rootPath });
+
+    expect(findings.map((finding) => finding.id)).toEqual(
+      expect.arrayContaining([
+        "python-project-missing-name",
+        "python-project-missing-test-tooling"
+      ])
+    );
+  });
 });
