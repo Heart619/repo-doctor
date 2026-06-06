@@ -54,6 +54,12 @@ Fail CI when medium or high severity findings exist:
 repo-doctor . --fail-on medium
 ```
 
+Disable GitHub Actions job summary output:
+
+```bash
+repo-doctor . --no-job-summary
+```
+
 ## Configuration
 
 Repo Doctor reads `repo-doctor.config.json` from the repository root when it exists:
@@ -106,6 +112,8 @@ jobs:
           path: "."
           args: "--markdown --fail-on medium"
 ```
+
+When the action runs in GitHub Actions, Repo Doctor appends a Markdown report to the job summary by default. Add `--no-job-summary` to `args` to disable this.
 
 ## Checks
 
