@@ -6,15 +6,5 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     ignores: ["dist/**", "node_modules/**", "coverage/**"]
-  },
-  {
-    files: ["**/*.ts"],
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname
-      }
-    }
   }
 );
-

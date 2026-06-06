@@ -1,0 +1,35 @@
+name: Repo Doctor
+description: Audit repository maintenance health.
+author: Heart619
+
+inputs:
+  path:
+    description: Repository path relative to the workflow workspace.
+    required: false
+    default: "."
+  args:
+    description: Extra Repo Doctor CLI arguments.
+    required: false
+    default: "--markdown"
+
+runs:
+  using: composite
+  steps:
+    - name: Install Repo Doctor
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+      run: |
+        cd "$ACTION_PATH"
+        npm ci
+        npm run build
+    - name: Run Repo Doctor
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        TARGET_PATH: ${{ inputs.path }}
+        EXTRA_ARGS: ${{ inputs.args }}
+      run: |
+        cd "$ACTION_PATH"
+        node dist/cli.js "$GITHUB_WORKSPACE/$TARGET_PATH" $EXTRA_ARGS
+
