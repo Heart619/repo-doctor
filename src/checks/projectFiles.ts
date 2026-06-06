@@ -179,6 +179,7 @@ async function checkPackageMetadata(
   findings: Finding[]
 ): Promise<void> {
   const packageJsonPath = path.join(rootPath, "package.json");
+  const pyprojectPath = path.join(rootPath, "pyproject.toml");
   const hasMetadata = await anyPathExists(rootPath, [
     "package.json",
     "pyproject.toml",
@@ -201,6 +202,10 @@ async function checkPackageMetadata(
 
   if (await pathExists(packageJsonPath)) {
     await checkNodePackageMetadata(rootPath, findings);
+  }
+
+  if (await pathExists(pyprojectPath)) {
+    await checkPythonProjectMetadata(rootPath, findings);
   }
 }
 
@@ -288,6 +293,58 @@ async function checkNodePackageMetadata(
   }
 }
 
+async function checkPythonProjectMetadata(
+  rootPath: string,
+  findings: Finding[]
+): Promise<void> {
+  const pyproject = await readTextFile(path.join(rootPath, "pyproject.toml"));
+
+  if (pyproject === undefined) {
+    return;
+  }
+
+  if (!hasPythonProjectName(pyproject)) {
+    findings.push({
+      id: "python-project-missing-name",
+      title: "Python project missing name",
+      severity: "low",
+      message: "pyproject.toml does not include an obvious project name.",
+      recommendation:
+        "Add name under [project] or [tool.poetry] so package metadata is clear.",
+      files: ["pyproject.toml"]
+    });
+  }
+
+  if (!(await hasPythonTestTooling(rootPath, pyproject))) {
+    findings.push({
+      id: "python-project-missing-test-tooling",
+      title: "Python project missing test tooling hints",
+      severity: "low",
+      message: "The Python project does not expose common test tooling hints.",
+      recommendation:
+        "Add pytest configuration in pyproject.toml, pytest.ini, tox.ini, or noxfile.py.",
+      files: ["pyproject.toml", "pytest.ini", "tox.ini", "noxfile.py"]
+    });
+  }
+}
+
+async function hasPythonTestTooling(
+  rootPath: string,
+  pyproject: string
+): Promise<boolean> {
+  return (
+    hasTomlSection(pyproject, "tool.pytest.ini_options") ||
+    (await anyPathExists(rootPath, ["pytest.ini", "tox.ini", "noxfile.py"]))
+  );
+}
+
+function hasPythonProjectName(pyproject: string): boolean {
+  return (
+    hasTomlStringField(pyproject, "project", "name") ||
+    hasTomlStringField(pyproject, "tool.poetry", "name")
+  );
+}
+
 async function readPackageJson(rootPath: string): Promise<
   | {
       description?: unknown;
@@ -304,7 +361,12 @@ async function readPackageJson(rootPath: string): Promise<
   }
 
   try {
-    const rawPackageJson = await readFile(packageJsonPath, "utf8");
+    const rawPackageJson = await readTextFile(packageJsonPath);
+
+    if (rawPackageJson === undefined) {
+      return undefined;
+    }
+
     return JSON.parse(rawPackageJson) as {
       description?: unknown;
       license?: unknown;
@@ -314,6 +376,51 @@ async function readPackageJson(rootPath: string): Promise<
   } catch {
     return undefined;
   }
+}
+
+async function readTextFile(filePath: string): Promise<string | undefined> {
+  try {
+    return await readFile(filePath, "utf8");
+  } catch {
+    return undefined;
+  }
+}
+
+function hasTomlStringField(
+  content: string,
+  sectionName: string,
+  fieldName: string
+): boolean {
+  const lines = content.split(/\r?\n/);
+  let currentSection = "";
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const section = trimmed.match(/^\[([^\]]+)]$/);
+
+    if (section) {
+      currentSection = section[1]?.trim() ?? "";
+      continue;
+    }
+
+    if (currentSection !== sectionName) {
+      continue;
+    }
+
+    const field = trimmed.match(/^([A-Za-z0-9_-]+)\s*=\s*["'](.+)["']\s*(#.*)?$/);
+
+    if (field?.[1] === fieldName && field[2].trim().length > 0) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function hasTomlSection(content: string, sectionName: string): boolean {
+  return content
+    .split(/\r?\n/)
+    .some((line) => line.trim() === `[${sectionName}]`);
 }
 
 function hasRepositoryMetadata(repository: unknown): boolean {

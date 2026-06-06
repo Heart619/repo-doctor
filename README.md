@@ -129,6 +129,7 @@ Repo Doctor v0.1 checks for:
 - Changelog or release notes.
 - Common package metadata.
 - Node package description, license, and repository metadata.
+- Python project name and test tooling hints.
 
 See [Finding Reference](docs/findings.md) for every current finding ID, severity, and recommendation.
 
