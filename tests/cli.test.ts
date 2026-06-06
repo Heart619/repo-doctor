@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -10,6 +10,7 @@ import packageJson from "../package.json" with { type: "json" };
 interface Capture {
   stdout: string;
   stderr: string;
+  env?: Record<string, string | undefined>;
 }
 
 function createCapture(): Capture & {
@@ -19,6 +20,7 @@ function createCapture(): Capture & {
   const capture = {
     stdout: "",
     stderr: "",
+    env: undefined,
     writeStdout(value: string): void {
       capture.stdout += value;
     },
@@ -118,6 +120,41 @@ describe("runCli", () => {
 
     expect(exitCode).toBe(0);
     expect(capture.stdout).toContain("# Repo Doctor Report");
+  });
+
+  it("writes a Markdown report to GITHUB_STEP_SUMMARY", async () => {
+    const rootPath = await createHealthyFixture();
+    const summaryPath = path.join(rootPath, "summary.md");
+    const capture = createCapture();
+    capture.env = { GITHUB_STEP_SUMMARY: summaryPath };
+
+    const exitCode = await runCli([rootPath, "--json"], {
+      env: capture.env,
+      writeStdout: capture.writeStdout,
+      writeStderr: capture.writeStderr
+    });
+    const summary = await readFile(summaryPath, "utf8");
+
+    expect(exitCode).toBe(0);
+    expect(JSON.parse(capture.stdout)).toMatchObject({ score: 100 });
+    expect(summary).toContain("# Repo Doctor Report");
+    expect(summary).toContain("**Score:** 100/100");
+  });
+
+  it("does not write a job summary when --no-job-summary is provided", async () => {
+    const rootPath = await createHealthyFixture();
+    const summaryPath = path.join(rootPath, "summary.md");
+    const capture = createCapture();
+    capture.env = { GITHUB_STEP_SUMMARY: summaryPath };
+
+    const exitCode = await runCli([rootPath, "--no-job-summary"], {
+      env: capture.env,
+      writeStdout: capture.writeStdout,
+      writeStderr: capture.writeStderr
+    });
+
+    await expect(stat(summaryPath)).rejects.toMatchObject({ code: "ENOENT" });
+    expect(exitCode).toBe(0);
   });
 
   it("fails when findings meet the fail-on threshold", async () => {

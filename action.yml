@@ -11,6 +11,10 @@ inputs:
     description: Extra Repo Doctor CLI arguments.
     required: false
     default: "--markdown"
+  job-summary:
+    description: Write a Markdown report to the GitHub Actions job summary.
+    required: false
+    default: "true"
 
 runs:
   using: composite
@@ -29,7 +33,11 @@ runs:
         ACTION_PATH: ${{ github.action_path }}
         TARGET_PATH: ${{ inputs.path }}
         EXTRA_ARGS: ${{ inputs.args }}
+        JOB_SUMMARY: ${{ inputs.job-summary }}
       run: |
         cd "$ACTION_PATH"
-        node dist/cli.js "$GITHUB_WORKSPACE/$TARGET_PATH" $EXTRA_ARGS
-
+        if [ "$JOB_SUMMARY" = "false" ]; then
+          node dist/cli.js "$GITHUB_WORKSPACE/$TARGET_PATH" $EXTRA_ARGS --no-job-summary
+        else
+          node dist/cli.js "$GITHUB_WORKSPACE/$TARGET_PATH" $EXTRA_ARGS
+        fi

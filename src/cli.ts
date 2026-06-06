@@ -3,6 +3,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
+import { appendFile } from "node:fs/promises";
 
 import { projectFileChecks } from "./checks/projectFiles.js";
 import { loadRepoDoctorConfig } from "./core/config.js";
@@ -19,10 +20,12 @@ interface CliOptions {
   targetPath: string;
   outputFormat: OutputFormat;
   failOn?: Severity;
+  writeJobSummary: boolean;
 }
 
 interface CliIo {
   cwd?: string;
+  env?: Record<string, string | undefined>;
   writeStdout(value: string): void;
   writeStderr(value: string): void;
 }
@@ -47,6 +50,7 @@ export async function runCli(args: string[], io: CliIo): Promise<number> {
       ignoreFindingIds: config.ignore
     });
     io.writeStdout(renderResult(result, options.outputFormat));
+    await writeJobSummaryIfNeeded(result, options, io.env ?? process.env);
 
     return shouldFailForThreshold(result.findings, options.failOn ?? config.failOn)
       ? 1
@@ -61,6 +65,7 @@ function parseArgs(args: string[]): CliOptions {
   let targetPath = ".";
   let outputFormat: OutputFormat = "text";
   let failOn: Severity | undefined;
+  let writeJobSummary = true;
   let sawOutputFlag = false;
 
   for (let index = 0; index < args.length; index += 1) {
@@ -77,6 +82,11 @@ function parseArgs(args: string[]): CliOptions {
 
       outputFormat = arg === "--json" ? "json" : "markdown";
       sawOutputFlag = true;
+      continue;
+    }
+
+    if (arg === "--no-job-summary") {
+      writeJobSummary = false;
       continue;
     }
 
@@ -106,7 +116,8 @@ function parseArgs(args: string[]): CliOptions {
   return {
     targetPath,
     outputFormat,
-    failOn
+    failOn,
+    writeJobSummary
   };
 }
 
@@ -140,8 +151,23 @@ function helpText(): string {
     "  --version    Print the package version.",
     "  --json       Print machine-readable JSON.",
     "  --markdown   Print a Markdown report.",
-    "  --fail-on    Exit 1 when findings meet or exceed a severity threshold."
+    "  --fail-on    Exit 1 when findings meet or exceed a severity threshold.",
+    "  --no-job-summary  Do not write to GITHUB_STEP_SUMMARY."
   ].join("\n");
+}
+
+async function writeJobSummaryIfNeeded(
+  result: Awaited<ReturnType<typeof scanRepository>>,
+  options: CliOptions,
+  env: Record<string, string | undefined>
+): Promise<void> {
+  const summaryPath = env.GITHUB_STEP_SUMMARY;
+
+  if (!options.writeJobSummary || !summaryPath) {
+    return;
+  }
+
+  await appendFile(summaryPath, renderMarkdownReport(result), "utf8");
 }
 
 function readPackageVersion(): string {
