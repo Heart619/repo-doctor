@@ -54,7 +54,16 @@ async function createHealthyFixture(): Promise<string> {
     "# Example\n\n## Installation\n\nnpm install\n\n## Usage\n\nrepo-doctor .\n"
   );
   await writeFixtureFile(rootPath, "LICENSE", "MIT\n");
-  await writeFixtureFile(rootPath, "package.json", '{"scripts":{"test":"vitest"}}');
+  await writeFixtureFile(
+    rootPath,
+    "package.json",
+    JSON.stringify({
+      description: "Example package.",
+      license: "MIT",
+      repository: "https://github.com/example/example",
+      scripts: { test: "vitest" }
+    })
+  );
   await writeFixtureFile(rootPath, "tests/example.test.ts", "test('ok', () => {})");
   await writeFixtureFile(rootPath, ".github/workflows/ci.yml", "name: CI\n");
   await writeFixtureFile(rootPath, ".github/ISSUE_TEMPLATE/bug.md", "bug\n");
