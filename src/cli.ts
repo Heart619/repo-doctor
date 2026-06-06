@@ -2,6 +2,7 @@
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
 
 import { projectFileChecks } from "./checks/projectFiles.js";
 import { pathExists } from "./core/fs.js";
@@ -27,6 +28,11 @@ interface CliIo {
 
 export async function runCli(args: string[], io: CliIo): Promise<number> {
   try {
+    if (args.includes("--version") || args.includes("-v")) {
+      io.writeStdout(`${readPackageVersion()}\n`);
+      return 0;
+    }
+
     const options = parseArgs(args);
     const rootPath = path.resolve(io.cwd ?? process.cwd(), options.targetPath);
 
@@ -125,10 +131,20 @@ function helpText(): string {
     "  repo-doctor [path] [--json|--markdown] [--fail-on low|medium|high]",
     "",
     "Options:",
+    "  --version    Print the package version.",
     "  --json       Print machine-readable JSON.",
     "  --markdown   Print a Markdown report.",
     "  --fail-on    Exit 1 when findings meet or exceed a severity threshold."
   ].join("\n");
+}
+
+function readPackageVersion(): string {
+  const packageJsonUrl = new URL("../package.json", import.meta.url);
+  const packageJson = JSON.parse(readFileSync(packageJsonUrl, "utf8")) as {
+    version?: unknown;
+  };
+
+  return typeof packageJson.version === "string" ? packageJson.version : "0.0.0";
 }
 
 const entryPath = fileURLToPath(import.meta.url);
@@ -141,4 +157,3 @@ if (process.argv[1] && path.resolve(process.argv[1]) === entryPath) {
 
   process.exitCode = exitCode;
 }
-

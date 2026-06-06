@@ -42,6 +42,12 @@ Print a Markdown report:
 repo-doctor . --markdown
 ```
 
+Print the installed version:
+
+```bash
+repo-doctor --version
+```
+
 Fail CI when medium or high severity findings exist:
 
 ```bash
@@ -150,4 +156,3 @@ Issues and pull requests are welcome. Please include the repository shape you te
 ## License
 
 MIT
-
