@@ -1,0 +1,50 @@
+{
+  "name": "@heart619/repo-doctor",
+  "version": "0.1.0",
+  "description": "A CLI and GitHub Action that audits open-source repository maintenance health.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Heart619",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Heart619/repo-doctor.git"
+  },
+  "homepage": "https://github.com/Heart619/repo-doctor#readme",
+  "bugs": {
+    "url": "https://github.com/Heart619/repo-doctor/issues"
+  },
+  "keywords": [
+    "cli",
+    "github-action",
+    "open-source",
+    "maintenance",
+    "repository-health"
+  ],
+  "bin": {
+    "repo-doctor": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "action.yml"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "doctor:self": "node dist/cli.js . --markdown"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^24.10.1",
+    "eslint": "^9.39.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.0",
+    "vitest": "^4.0.14"
+  }
+}
+
